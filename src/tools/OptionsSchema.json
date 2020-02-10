@@ -58,7 +58,9 @@
     },
     "PipeTransport": {
       "type": "object",
-      "required": [ "debuggerPath" ],
+      "required": [
+        "debuggerPath"
+      ],
       "description": "When present, this tells the debugger to connect to a remote computer using another executable as a pipe that will relay standard input/output between VS Code and the .NET Core debugger backend executable (vsdbg).",
       "default": {
         "pipeCwd": "${workspaceFolder}",
@@ -191,7 +193,9 @@
     },
     "LaunchBrowserPlatformOptions": {
       "type": "object",
-      "required": [ "command" ],
+      "required": [
+        "command"
+      ],
       "properties": {
         "command": {
           "type": "string",
@@ -207,7 +211,9 @@
     },
     "LaunchBrowser": {
       "type": "object",
-      "required": [ "enabled" ],
+      "required": [
+        "enabled"
+      ],
       "description": "Configures starting a web browser as part of the launch -- should a web browser be started, and if so, what command should be run to start it. This option can be modified to launch a specific browser.",
       "default": {
         "enabled": true
@@ -309,7 +315,11 @@
         },
         "console": {
           "type": "string",
-          "enum": [ "internalConsole", "integratedTerminal", "externalTerminal" ],
+          "enum": [
+            "internalConsole",
+            "integratedTerminal",
+            "externalTerminal"
+          ],
           "enumDescriptions": [
             "Output to the VS Code Debug Console. This doesn't support reading console input (ex:Console.ReadLine)",
             "VS Code's integrated terminal",
@@ -374,7 +384,9 @@
           "$ref": "#/definitions/SourceLinkOptions",
           "description": "Options to control how Source Link connects to web servers. For more information: https://aka.ms/VSCode-CS-LaunchJson#source-link-options",
           "default": {
-            "*": { "enabled": true }
+            "*": {
+              "enabled": true
+            }
           }
         },
         "allowFastEvaluate": {
@@ -393,6 +405,11 @@
       "type": "object",
       "required": [],
       "properties": {
+        "processCommand": {
+          "type": "string",
+          "description": "Attaches to a process with this command",
+          "default": "If this is use 'processId' and 'processName' should not be used."
+        },
         "processName": {
           "type": "string",
           "description": "",
@@ -463,7 +480,9 @@
           "$ref": "#/definitions/SourceLinkOptions",
           "description": "Options to control how Source Link connects to web servers. For more information: https://aka.ms/VSCode-CS-LaunchJson#source-link-options",
           "default": {
-            "*": { "enabled": true }
+            "*": {
+              "enabled": true
+            }
           }
         },
         "allowFastEvaluate": {

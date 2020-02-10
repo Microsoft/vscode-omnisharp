@@ -11,7 +11,7 @@ function AppendFieldsToObject(reference: any, obj: any) {
     // Make sure it is an object type
     if (typeof obj == 'object') {
         for (let referenceKey in reference) {
-            // If key exists in original object and is an object. 
+            // If key exists in original object and is an object.
             if (obj.hasOwnProperty(referenceKey)) {
                 obj[referenceKey] = AppendFieldsToObject(reference[referenceKey], obj[referenceKey]);
             } else {
@@ -24,7 +24,7 @@ function AppendFieldsToObject(reference: any, obj: any) {
     return obj;
 }
 
-// Combines two object's fields, giving the parentDefault a higher precedence. 
+// Combines two object's fields, giving the parentDefault a higher precedence.
 function MergeDefaults(parentDefault: any, childDefault: any) {
     let newDefault: any = {};
 
@@ -75,7 +75,7 @@ function ReplaceReferences(definitions: any, objects: any) {
             delete objects[key]['$ref'];
         }
 
-        // Recursively replace references if this object has properties. 
+        // Recursively replace references if this object has properties.
         if (objects[key].hasOwnProperty('type') && objects[key].type === 'object' && objects[key].properties !== null) {
             objects[key].properties = ReplaceReferences(definitions, objects[key].properties);
             objects[key].properties = UpdateDefaults(objects[key].properties, objects[key].default);
@@ -85,7 +85,7 @@ function ReplaceReferences(definitions: any, objects: any) {
     return objects;
 }
 
-function mergeReferences(baseDefinitions: any, additionalDefinitions: any) : void {
+function mergeReferences(baseDefinitions: any, additionalDefinitions: any): void {
     for (let key in additionalDefinitions) {
         if (baseDefinitions[key]) {
             throw `Error: '${key}' defined in multiple schema files.`;
@@ -117,6 +117,7 @@ export function GenerateOptionsSchema() {
     delete unitTestDebuggingOptions.processName;
     delete unitTestDebuggingOptions.processId;
     delete unitTestDebuggingOptions.pipeTransport;
+    delete unitTestDebuggingOptions.processCommand;
     // Add the additional options we do want
     unitTestDebuggingOptions["type"] = {
         "type": "string",
@@ -138,7 +139,7 @@ export function GenerateOptionsSchema() {
     if (os.platform() === 'win32') {
         content = content.replace(/\n/gm, "\r\n");
     }
-    
+
     // We use '\u200b' (unicode zero-length space character) to break VS Code's URL detection regex for URLs that are examples. This process will
     // convert that from the readable espace sequence, to just an invisible character. Convert it back to the visible espace sequence.
     content = content.replace(/\u200b/gm, "\\u200b");

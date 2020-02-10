@@ -1488,6 +1488,11 @@
             "type": "object",
             "required": [],
             "properties": {
+              "processCommand": {
+                "type": "string",
+                "description": "Attaches to a process with this command",
+                "default": "If this is use 'processId' and 'processName' should not be used."
+              },
               "processName": {
                 "type": "string",
                 "description": "",
@@ -2594,6 +2599,11 @@
             "type": "object",
             "required": [],
             "properties": {
+              "processCommand": {
+                "type": "string",
+                "description": "Attaches to a process with this command",
+                "default": "If this is use 'processId' and 'processName' should not be used."
+              },
               "processName": {
                 "type": "string",
                 "description": "",
