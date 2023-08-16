@@ -982,6 +982,7 @@ export interface vscode {
         workspaceFolders: readonly WorkspaceFolder[] | undefined;
     };
     extensions: {
+        getExtension(extensionId: string): Extension<any> | undefined;
         all: ReadonlyArray<Extension<any>>;
     };
     Uri: {
