@@ -13,6 +13,16 @@ import { languageServerOptions } from '../shared/options';
 const SuppressMiscellaneousFilesToastsOption = 'dotnet.server.suppressMiscellaneousFilesToasts';
 const NotifiedDocuments = new Set<string>();
 
+export const LearnMoreAboutMiscellaneousFilesCommand = {
+    command: 'vscode.open',
+    title: vscode.l10n.t('Learn more'),
+    arguments: [
+        vscode.Uri.parse(
+            'https://learn.microsoft.com/en-us/visualstudio/ide/reference/miscellaneous-files?view=vs-2022'
+        ),
+    ],
+};
+
 export function registerMiscellaneousFileNotifier(
     context: vscode.ExtensionContext,
     languageServer: RoslynLanguageServer
@@ -55,7 +65,7 @@ export function registerMiscellaneousFileNotifier(
                 context.workspaceState.update(SuppressMiscellaneousFilesToastsOption, true);
             },
         };
-        showWarningMessage(vscode, message, dismissItem, disableWorkspace);
+        showWarningMessage(vscode, message, dismissItem, disableWorkspace, LearnMoreAboutMiscellaneousFilesCommand);
     });
 }
 

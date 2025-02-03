@@ -181,6 +181,7 @@
   "C# configuration has changed. Would you like to reload the window to apply your changes?": "C# configuration has changed. Would you like to reload the window to apply your changes?",
   "Nested Code Action": "Nested Code Action",
   "Fix All: ": "Fix All: ",
+  "Learn more": "Learn more",
   "The active document is not part of the open workspace. Not all language features will be available.": "The active document is not part of the open workspace. Not all language features will be available.",
   "Dismiss": "Dismiss",
   "Do not show for this workspace": "Do not show for this workspace",

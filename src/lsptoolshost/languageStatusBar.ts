@@ -10,6 +10,7 @@ import { languageServerOptions } from '../shared/options';
 import { ServerState } from './serverStateChange';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
 import { RazorLanguage } from '../razor/src/razorLanguage';
+import { LearnMoreAboutMiscellaneousFilesCommand } from './miscellaneousFileNotifier';
 
 export function registerLanguageStatusItems(
     context: vscode.ExtensionContext,
@@ -89,6 +90,7 @@ class ProjectContextStatus {
                       'The active document is not part of the open workspace. Not all language features will be available.'
                   )
                 : vscode.l10n.t('Active File Context');
+            item.command = e.context._vs_is_miscellaneous ? LearnMoreAboutMiscellaneousFilesCommand : undefined;
         });
 
         // Trigger a refresh, but don't block creation on the refresh completing.
