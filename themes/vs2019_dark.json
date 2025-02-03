@@ -493,7 +493,7 @@
                 "variable.other.enummember"
             ],
             "settings": {
-                "foreground": "#51B6C4",
+                "foreground": "#51B6C4"
             }
         },
         {
@@ -641,7 +641,7 @@
             "name": "Constant",
             "scope": "variable.other.constant",
             "settings": {
-                "foreground": "#D4D4D4",
+                "foreground": "#D4D4D4"
             }
         },
         {
@@ -676,105 +676,105 @@
             "name": "Struct",
             "scope": "entity.name.type.struct",
             "settings": {
-                "foreground": "#86C691",
+                "foreground": "#86C691"
             }
         },
         {
             "name": "Extension Method",
             "scope": "entity.name.function.extension",
             "settings": {
-                "foreground": "#DCDCAA",
+                "foreground": "#DCDCAA"
             }
         },
         {
             "name": "Xml Documentation Comment",
             "scope": "comment.documentation",
             "settings": {
-                "foreground": "#608B4E",
+                "foreground": "#608B4E"
             }
         },
         {
             "name": "Xml Documentation Comment Attribute",
             "scope": "comment.documentation.attribute",
             "settings": {
-                "foreground": "#C8C8C8",
+                "foreground": "#C8C8C8"
             }
         },
         {
             "name": "Xml Documentation Comment CDATA",
             "scope": "comment.documentation.cdata",
             "settings": {
-                "foreground": "#E9D585",
+                "foreground": "#E9D585"
             }
         },
         {
             "name": "Xml Documentation Comment Delimiter",
             "scope": "comment.documentation.delimiter",
             "settings": {
-                "foreground": "#808080",
+                "foreground": "#808080"
             }
         },
         {
             "name": "Xml Documentation Comment Name",
             "scope": "comment.documentation.name",
             "settings": {
-                "foreground": "#569CD6",
+                "foreground": "#569CD6"
             }
         },
         {
             "name": "RegEx Comment",
             "scope": "string.regexp.comment.cs",
             "settings": {
-                "foreground": "#57A64A",
+                "foreground": "#57A64A"
             }
         },
         {
             "name": "RegEx Character Class",
             "scope": "constant.character.character-class.regexp.cs",
             "settings": {
-                "foreground": "#2EABFE",
+                "foreground": "#2EABFE"
             }
         },
         {
             "name": "RegEx Anchor",
             "scope": "keyword.control.anchor.regexp.cs",
             "settings": {
-                "foreground": "#F979AE",
+                "foreground": "#F979AE"
             }
         },
         {
             "name": "RegEx Quantifier",
             "scope": "keyword.operator.quantifier.regexp.cs",
             "settings": {
-                "foreground": "#F979AE",
+                "foreground": "#F979AE"
             }
         },
         {
             "name": "RegEx Grouping",
             "scope": "string.regexp.self-escaped-character.cs",
             "settings": {
-                "foreground": "#05C3BA",
+                "foreground": "#05C3BA"
             }
         },
         {
             "name": "RegEx Alternation",
             "scope": "keyword.operator.or.regexp.cs",
             "settings": {
-                "foreground": "#05C3BA",
+                "foreground": "#05C3BA"
             }
         },
         {
             "name": "RegEx Self-Escaped Character",
             "scope": "punctuation.definition.group.regexp.cs",
             "settings": {
-                "foreground": "#D69D85",
+                "foreground": "#D69D85"
             }
         },
         {
             "name": "RegEx Other Escape",
             "scope": "string.regexp.other-escape.cs",
             "settings": {
-                "foreground": "#FFD68F",
+                "foreground": "#FFD68F"
             }
         },
         {
@@ -783,6 +783,6 @@
             "settings": {
                 "foreground": "#D69D85"
             }
-        },
+        }
     ]
 }
