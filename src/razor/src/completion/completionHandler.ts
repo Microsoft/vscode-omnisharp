@@ -377,6 +377,36 @@ export class CompletionHandler {
         projectedPosition: Position,
         triggerCharacter: string | undefined
     ) {
+        // The following characters are defined as trigger characters in Razor language server,
+        // but are not normally trigger characters for VS Code HTML language server. We will
+        // explicitely ignore them to avoid unexpected completion coming up. VS HTML language server
+        // simply returns nothign when completion is not appropriate. VS Code HTML completion is much
+        // more aggressive and will always put "someting" (e.g. all words in the document) into the
+        // completion list whenever asked for one.
+        const ignorableTriggerCharacters = new Set<string>([
+            ' ',
+            '(',
+            '=',
+            '[',
+            '{',
+            '"',
+            '/',
+            '\\',
+            ':',
+            '~',
+            '*',
+            ',',
+            '-',
+            '&',
+            "'",
+            '"',
+            '`',
+        ]);
+
+        if (triggerCharacter && ignorableTriggerCharacters.has(triggerCharacter)) {
+            return CompletionHandler.emptyCompletionList;
+        }
+
         const completions = await vscode.commands.executeCommand<vscode.CompletionList | vscode.CompletionItem[]>(
             'vscode.executeCompletionItemProvider',
             virtualDocumentUri,
