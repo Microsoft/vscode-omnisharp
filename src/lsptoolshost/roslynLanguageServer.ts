@@ -30,6 +30,7 @@ import {
     RequestHandler,
     ResponseError,
     NotificationHandler0,
+    vsdiag,
 } from 'vscode-languageclient/node';
 import { PlatformInformation } from '../shared/platform';
 import { readConfigurations } from './configurationMiddleware';
@@ -293,6 +294,47 @@ export class RoslynLanguageServer {
                 protocol2Code: UriConverter.deserialize,
             },
             middleware: {
+                async provideDiagnostics(document, previousResultId, token, next) {
+                    const result = await next(document, previousResultId, token);
+                    if (languageServerOptions.reportInformationAsHint) {
+                        if (result?.kind === vsdiag.DocumentDiagnosticReportKind.full) {
+                            result.items.forEach((element) => {
+                                element.severity =
+                                    element.severity === vscode.DiagnosticSeverity.Information
+                                        ? vscode.DiagnosticSeverity.Hint
+                                        : element.severity;
+                            });
+                        }
+                    }
+                    return result;
+                },
+                async provideWorkspaceDiagnostics(resultIds, token, resultReporter, next) {
+                    const result = await next(resultIds, token, (chunk) => {
+                        if (languageServerOptions.reportInformationAsHint) {
+                            chunk?.items.forEach((item) => {
+                                if (item.kind === vsdiag.DocumentDiagnosticReportKind.full) {
+                                    item.items.forEach((element) => {
+                                        element.severity =
+                                            element.severity === vscode.DiagnosticSeverity.Information
+                                                ? vscode.DiagnosticSeverity.Hint
+                                                : element.severity;
+                                    });
+                                }
+                            });
+                        }
+                        resultReporter(chunk);
+                    });
+                    return result;
+                },
+                handleDiagnostics(uri, diagnostics, next) {
+                    diagnostics.forEach((element) => {
+                        element.severity =
+                            element.severity === vscode.DiagnosticSeverity.Information
+                                ? vscode.DiagnosticSeverity.Hint
+                                : element.severity;
+                    });
+                    next(uri, diagnostics);
+                },
                 workspace: {
                     configuration: (params) => readConfigurations(params),
                 },

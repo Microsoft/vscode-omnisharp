@@ -81,6 +81,7 @@ export interface LanguageServerOptions {
     readonly suppressLspErrorToasts: boolean;
     readonly suppressMiscellaneousFilesToasts: boolean;
     readonly useServerGC: boolean;
+    readonly reportInformationAsHint: boolean;
 }
 
 export interface RazorOptions {
@@ -413,6 +414,9 @@ class LanguageServerOptionsImpl implements LanguageServerOptions {
     }
     public get useServerGC() {
         return readOption<boolean>('dotnet.server.useServerGC', true);
+    }
+    public get reportInformationAsHint() {
+        return readOption<boolean>('dotnet.diagnostics.reportInformationAsHint', false);
     }
 }
 

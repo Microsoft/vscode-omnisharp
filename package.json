@@ -115,9 +115,9 @@
     "tmp": "0.0.33",
     "uuid": "^9.0.0",
     "vscode-html-languageservice": "^5.0.1",
-    "vscode-jsonrpc": "8.2.0-next.0",
-    "vscode-languageclient": "8.2.0-next.1",
-    "vscode-languageserver-protocol": "3.17.4-next.1",
+    "vscode-jsonrpc": "9.0.0-next.7",
+    "vscode-languageclient": "10.0.0-next.14",
+    "vscode-languageserver-protocol": "3.17.6-next.12",
     "vscode-languageserver-textdocument": "^1.0.5",
     "vscode-nls": "5.0.1",
     "yauzl": "2.10.0"
@@ -836,6 +836,12 @@
               "%configuration.dotnet.backgroundAnalysis.compilerDiagnosticsScope.none%"
             ],
             "description": "%configuration.dotnet.backgroundAnalysis.compilerDiagnosticsScope%",
+            "order": 30
+          },
+          "dotnet.diagnostics.reportInformationAsHint": {
+            "type": "boolean",
+            "default": false,
+            "description": "Enable this setting to reduce visual distractions in your editor. Information problems will be reported as hints visible only when the code actions popup is opened.",
             "order": 30
           },
           "dotnet.highlighting.highlightRelatedRegexComponents": {
