@@ -1,0 +1,76 @@
+name: Comment on stale issues
+
+on:
+  schedule:
+  - cron: '0 0 * * *' # This will run daily at midnight
+  workflow_dispatch:
+
+jobs:
+  comment-stale-issues:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+    env:
+      LABEL_OWNER_MAPPING_JSON: >
+        {
+          "Debugger": "@wardengnaw",
+          "Debugger-ExpressionEvaluation": "@wardengnaw",
+          "Debugger-FixedPendingInsertion": "@wardengnaw",
+          "Debugger-Install": "@wardengnaw",
+          "Debugger-Poachable": "@wardengnaw",
+          "Documentation": "@mikadumont",
+          "Project System": "@jasonmalinowski",
+          "Question": "@mikadumont",
+          "Razor": "@phil-allen-msft",
+          "Unity": "@jbevain"
+        }
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Comment on stale issues
+      run: |
+        LABEL_OWNER_MAPPING=$(echo "${LABEL_OWNER_MAPPING_JSON}")
+        STALE_DATE=$(date -d '14 days ago' +%Y-%m-%d)
+        QUERY="repo:dotnet/vscode-csharp+is:open+is:issue+updated:<${STALE_DATE}+-label:Feature%20Request+-label:Needs%20More%20Info+-label:OmniSharp+-label:Suggestion"
+        ISSUES=$(gh api search/issues?q="${QUERY}" --paginate --jq '.items[] | {number: .number, labels: [.labels[].name], assignees: [.assignees[].login]}')        
+        
+        # Process each issue
+        echo "${ISSUES}" | jq -c '.' | while read -r issue; do
+          issue_number=$(echo "$issue" | jq '.number')
+          ASSIGNEES=$(echo "$issue" | jq -r '.assignees[].login')
+          
+          # Initialize TAGGED_OWNERS
+          TAGGED_OWNERS=""
+          
+          # Check if there are any assignees
+          if [[ ! -z "$ASSIGNEES" ]]; then
+            for assignee in $ASSIGNEES; do
+              TAGGED_OWNERS="$TAGGED_OWNERS @$assignee"
+            done
+          else
+            # If no assignees, check for label owners
+            LABELS=$(echo "$issue" | jq -r '.labels[].name')
+            for label in $LABELS; do
+              OWNER=$(echo $LABEL_OWNER_MAPPING | jq -r ".[\"$label\"] // empty")
+              if [ ! -z "$OWNER" ]; then
+                # Add the found owner to the list of owners to be tagged
+                TAGGED_OWNERS="$TAGGED_OWNERS $OWNER"
+              fi
+            done
+            if [ -z "$TAGGED_OWNERS" ]; then
+              # If no owners found in the mapping, use default owners
+              TAGGED_OWNERS="@dibarbet @mikadumont"
+            fi
+          fi
+        
+          # Remove leading whitespace and duplicate spaces
+          TAGGED_OWNERS=$(echo $TAGGED_OWNERS | xargs)
+          
+          # Comment on the issue and tag the collected owners
+          COMMENT="This issue has been marked as stale after 14 days of inactivity. $TAGGED_OWNERS, could you please take a look?"
+          gh issue comment $issue_number --body "$COMMENT"
+        done
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

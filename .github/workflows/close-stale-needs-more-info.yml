@@ -1,0 +1,78 @@
+name: 'Close Issues with Stale Needs More Info Label'
+
+on:
+  schedule:
+    # Run this workflow at 00:00 every day
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  close-stale-issues:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Close Stale Issues with Needs More Info Label and Comment
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const labelName = 'needs-more-info';
+            const staleDays = 14;
+            const closingComment = "This issue has been automatically closed due to inactivity from original bug filer and having the 'needs-more-info' label for more than 14 days. If the issue still persists, please reopen the issue with the requested information.";
+            const currentDate = new Date();
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: labelName,
+              state: 'open',
+            });
+
+            for (const issue of issues) {
+              let labelAddedDate = null;
+
+              // Fetch events to find when the label was added
+              const events = await github.paginate(github.rest.issues.listEvents, {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+              });
+
+              // Look for the event where the label was added and capture the date
+              for (const event of events) {
+                if (event.event === 'labeled' && event.label.name === labelName) {
+                  labelAddedDate = new Date(event.created_at);
+                  break;
+                }
+              }
+
+              if (labelAddedDate) {
+                const diffTime = Math.abs(currentDate - labelAddedDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                if (diffDays > staleDays) {
+                  // Post a closing comment before closing the issue
+                  await github.rest.issues.createComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: issue.number,
+                    body: closingComment,
+                  });
+
+                  // Close the issue
+                  await github.rest.issues.update({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: issue.number,
+                    state: 'closed',
+                  });
+
+                  console.log(`Issue #${issue.number} has been closed with a comment as it has had the '${labelName}' label for more than ${staleDays} days.`);
+                }
+              }
+            }

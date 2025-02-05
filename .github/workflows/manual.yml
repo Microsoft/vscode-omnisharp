@@ -1,0 +1,82 @@
+name: 'Manual Cleanup: Remove Needs More Info'
+
+on:
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  remove-label-on-response:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Remove Needs More Info Label if Issue Creator Responded
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const labelName = 'needs-more-info';
+            const commentBody = "The `needs-more-info` label has been removed since the original bug filer has responded since the label was originally set.";
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: labelName,
+              state: 'open',
+            });
+
+            for (const issue of issues) {
+              let labelAddedTimestamp = 0;
+
+              // Fetch events to find when the label was added
+              const events = await github.paginate(github.rest.issues.listEventsForRepo, {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+              });
+
+              // Determine when the label was added
+              for (const event of events) {
+                if (event.event === 'labeled' && event.label.name === labelName) {
+                  labelAddedTimestamp = new Date(event.created_at).getTime();
+                  break;
+                }
+              }
+
+              if (labelAddedTimestamp > 0) {
+                // Check for comments by the issue creator after the label was added
+                const comments = await github.paginate(github.rest.issues.listComments, {
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issue.number,
+                });
+
+                const hasResponseAfterLabel = comments.some(comment => {
+                  return new Date(comment.created_at).getTime() > labelAddedTimestamp &&
+                         comment.user.login === issue.user.login;
+                });
+
+                if (hasResponseAfterLabel) {
+                  // Remove the label
+                  await github.rest.issues.removeLabel({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: issue.number,
+                    name: labelName,
+                  });
+
+                  // Add a comment
+                  await github.rest.issues.createComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: issue.number,
+                    body: commentBody,
+                  });
+
+                  console.log(`Removed "${labelName}" label from issue #${issue.number} and added a comment.`);
+                }
+              }
+            }
