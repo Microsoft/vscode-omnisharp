@@ -12,6 +12,8 @@ import reportIssue from '../shared/reportIssue';
 import { getDotnetInfo } from '../shared/utils/getDotnetInfo';
 import { IHostExecutableResolver } from '../shared/constants/IHostExecutableResolver';
 import { getCSharpDevKit } from '../utils/getCSharpDevKit';
+import { VSProjectContext, VSProjectContextList } from './roslynProtocol';
+import { CancellationToken } from 'vscode-languageclient/node';
 
 export function registerCommands(
     context: vscode.ExtensionContext,
@@ -44,6 +46,11 @@ export function registerCommands(
             vscode.commands.registerCommand('dotnet.openSolution', async () => openSolution(languageServer))
         );
     }
+    context.subscriptions.push(
+        vscode.commands.registerCommand('csharp.changeProjectContext', async (options) =>
+            changeProjectContext(languageServer, options)
+        )
+    );
     context.subscriptions.push(
         vscode.commands.registerCommand('csharp.reportIssue', async () =>
             reportIssue(
@@ -193,4 +200,49 @@ async function openSolution(languageServer: RoslynLanguageServer): Promise<vscod
         await languageServer.openSolution(uri);
         return uri;
     }
+}
+
+async function changeProjectContext(
+    languageServer: RoslynLanguageServer,
+    options: ChangeProjectContextOptions | undefined
+): Promise<VSProjectContext | undefined> {
+    const editor = vscode.window.activeTextEditor;
+    if (editor === undefined) {
+        return;
+    }
+    const contextList = await languageServer._projectContextService.getProjectContexts(
+        editor.document.uri,
+        CancellationToken.None
+    );
+    if (contextList === undefined) {
+        return;
+    }
+
+    let context: VSProjectContext | undefined = undefined;
+
+    if (options !== undefined) {
+        const contextLabel = `${options.projectName} (${options.tfm})`;
+        context = contextList._vs_projectContexts.find((context) => context._vs_label === contextLabel);
+    } else {
+        const items = contextList._vs_projectContexts.map((context) => {
+            return { label: context._vs_label, context };
+        });
+        const selectedItem = await vscode.window.showQuickPick(items, {
+            placeHolder: vscode.l10n.t('Select project context'),
+        });
+        context = selectedItem?.context;
+    }
+
+    if (context === undefined) {
+        return;
+    }
+
+    languageServer._projectContextService.setActiveFileContext(contextList, context);
+    // TODO: Replace this with proper server-side onDidChange notifications
+    editor.edit(() => 0);
+}
+
+interface ChangeProjectContextOptions {
+    projectName: string;
+    tfm: string;
 }

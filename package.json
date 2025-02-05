@@ -1834,6 +1834,12 @@
         "enablement": "dotnet.server.activationContext == 'Roslyn' || dotnet.server.activationContext == 'OmniSharp'"
       },
       {
+        "command": "csharp.changeProjectContext",
+        "title": "%command.csharp.changeProjectContext%",
+        "category": "CSharp",
+        "enablement": "dotnet.server.activationContext == 'Roslyn'"
+      },
+      {
         "command": "csharp.listProcess",
         "title": "%command.csharp.listProcess%",
         "category": "CSharp"

@@ -10,6 +10,7 @@
   "command.dotnet.generateAssets.currentProject": "Generate Assets for Build and Debug",
   "command.dotnet.restore.project": "Restore Project",
   "command.dotnet.restore.all": "Restore All Projects",
+  "command.csharp.changeProjectContext": "Change the active document's project context",
   "command.csharp.downloadDebugger": "Download .NET Core Debugger",
   "command.csharp.listProcess": "List process for attach",
   "command.csharp.listRemoteProcess": "List processes on remote connection for attach",

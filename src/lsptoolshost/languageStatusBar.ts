@@ -64,7 +64,10 @@ class ProjectContextStatus {
             RazorLanguage.documentSelector
         );
         const projectContextService = languageServer._projectContextService;
-
+        const selectContextCommand = {
+            command: 'csharp.changeProjectContext',
+            title: vscode.l10n.t('Select context'),
+        };
         const item = vscode.languages.createLanguageStatusItem('csharp.projectContextStatus', documentSelector);
         item.name = vscode.l10n.t('C# Project Context Status');
         item.detail = vscode.l10n.t('Active File Context');
@@ -72,6 +75,7 @@ class ProjectContextStatus {
 
         projectContextService.onActiveFileContextChanged((e) => {
             item.text = e.context._vs_label;
+            item.command = e.hasAdditionalContexts ? selectContextCommand : undefined;
 
             // Show a warning when the active file is part of the Miscellaneous File workspace and
             // project initialization is complete.
