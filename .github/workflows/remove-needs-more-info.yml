@@ -1,0 +1,76 @@
+name: 'Remove Needs More Info Label'
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  debug-and-remove-label:
+    runs-on: ubuntu-latest
+    if: github.event.issue.pull_request == null # Ensure it runs only for issue comments
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Remove "needs-more-info" Label and Comment
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const issue = context.payload.issue;
+            const user = context.payload.sender;
+
+            // Check if the comment was made by the issue creator
+            if (issue.user.login === user.login) {
+              const issueNumber = issue.number;
+              const labelName = 'needs-more-info';
+              let labelAddedByUser = '';
+
+              // Find who added the 'needs-more-info' label
+              for await (const response of github.paginate.iterator(github.rest.issues.listEvents, {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+              })) {
+                const events = response.data;
+                const labelEvent = events.find(event => event.event === 'labeled' && event.label.name === labelName);
+                if (labelEvent) {
+                  labelAddedByUser = labelEvent.actor.login;
+                  break; // Stop at the most recent event that added the label
+                }
+              }
+
+              // Get all labels for the issue
+              const { data: labels } = await github.rest.issues.listLabelsOnIssue({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+              });
+
+              // Check if the issue has the specific label
+              if (labels.some(label => label.name === labelName)) {
+                // Remove the label
+                await github.rest.issues.removeLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issueNumber,
+                  name: labelName,
+                });
+
+                // If someone added the label, comment and tag that user
+                if (labelAddedByUser) {
+                  await github.rest.issues.createComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: issueNumber,
+                    body: `@${labelAddedByUser}, the '${labelName}' label has been removed upon receiving further response from the original bug filer.`,
+                  });
+                }
+
+                console.log(`Label "${labelName}" removed from issue #${issueNumber}.`);
+              }
+            }
