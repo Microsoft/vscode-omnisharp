@@ -89,7 +89,8 @@
   "extensionDependencies": [
     "ms-dotnettools.vscode-dotnet-runtime"
   ],
-  "dependencies": {
+  "dependencies": {    
+    "@github/copilot-language-server": "1.256.0",
     "@microsoft/servicehub-framework": "4.2.99-beta",
     "@octokit/rest": "^20.0.1",
     "@types/cross-spawn": "6.0.2",
