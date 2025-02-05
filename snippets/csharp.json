@@ -354,6 +354,27 @@
         ],
         "description": "An automatically implemented property. C# 3.0 or higher"
     },
+    "propex": {
+        "prefix": "propex",
+        "body": [
+            "public ${1:int} ${2:MyProperty} => ${3:myVar};",
+            "$0"
+        ],
+        "description": "An expression-bodied property without a backing field. C# 6.0 or higher"
+    },
+    "propexfull": {
+        "prefix": "propexfull",
+        "body": [
+            "private ${1:int} ${2:myVar};",
+            "public ${1:int} ${3:MyProperty}",
+            "{",
+            "\tget => ${2:myVar};",
+            "\tset => ${2:myVar} = value;",
+            "}",
+            "$0"
+        ],
+        "description": "An expression-bodied property with a private field. C# 6.0 or higher"
+    },
     "sim": {
         "prefix": "sim",
         "body": [
